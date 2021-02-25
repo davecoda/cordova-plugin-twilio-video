@@ -31,6 +31,8 @@ public class TwilioVideo extends CordovaPlugin {
     private CordovaInterface cordova;
     private String roomId;
     private String token;
+    private Boolean audio;
+    private Boolean video;
     private CallConfig config = new CallConfig();
 
     @Override
@@ -63,15 +65,17 @@ public class TwilioVideo extends CordovaPlugin {
         try {
             this.token = args.getString(0);
             this.roomId = args.getString(1);
+            this.audio = args.getBoolean(2);
+            this.video = args.getBoolean(3);
             final CordovaPlugin that = this;
             final String token = this.token;
             final String roomId = this.roomId;
-            if (args.length() > 2) {
-                this.config.parse(args.getJSONObject(2));
+            if (args.length() > 4) {
+                this.config.parse(args.getJSONObject(4));
             }
 
-            LOG.d(TAG, "TOKEN: " + token);
-            LOG.d(TAG, "ROOMID: " + roomId);
+            LOG.i(TAG, "TOKEN: " + token);
+            LOG.i(TAG, "ROOMID: " + roomId);
 
             cordova.getThreadPool().execute(new Runnable() {
                 public void run() {
@@ -80,6 +84,8 @@ public class TwilioVideo extends CordovaPlugin {
                     intentTwilioVideo.setPackage(that.cordova.getActivity().getApplicationContext().getPackageName());
                     intentTwilioVideo.putExtra("token", token);
                     intentTwilioVideo.putExtra("roomId", roomId);
+                    intentTwilioVideo.putExtra("audio", audio);
+                    intentTwilioVideo.putExtra("video", video);
                     intentTwilioVideo.putExtra("config", config);
                     that.cordova.getActivity().startActivity(intentTwilioVideo);
                 }

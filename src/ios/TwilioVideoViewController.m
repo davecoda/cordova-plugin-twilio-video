@@ -62,9 +62,11 @@ NSString *const CLOSED = @"CLOSED";
 
 #pragma mark - Public
 
-- (void)connectToRoom:(NSString*)room token:(NSString *)token {
+- (void)connectToRoom:(NSString*)room token:(NSString *)token audio:(NSNumber *)audio video:(NSNumber *)video {
     self.roomName = room;
     self.accessToken = token;
+    self.audio = audio;
+    self.video = video;
     [self showRoomUI:YES];
 
     [TwilioVideoPermissions requestRequiredPermissions:^(BOOL grantedPermissions) {
@@ -128,7 +130,7 @@ NSString *const CLOSED = @"CLOSED";
     if (frontCamera != nil || backCamera != nil) {
         self.camera = [[TVICameraSource alloc] initWithDelegate:self];
         self.localVideoTrack = [TVILocalVideoTrack trackWithSource:self.camera
-                                                             enabled:YES
+                                                           enabled:YES
                                                                 name:@"Camera"];
         if (!self.localVideoTrack) {
             [self logMessage:@"Failed to add video track"];
@@ -188,7 +190,7 @@ NSString *const CLOSED = @"CLOSED";
     // Create an audio track.
     if (!self.localAudioTrack) {
         self.localAudioTrack = [TVILocalAudioTrack trackWithOptions:nil
-                                                            enabled:YES
+                                                            enabled:self.audio
                                                                name:@"Microphone"];
         
         if (!self.localAudioTrack) {
@@ -199,6 +201,9 @@ NSString *const CLOSED = @"CLOSED";
     // Create a video track which captures from the camera.
     if (!self.localVideoTrack) {
         [self startPreview];
+    }
+    if ([self.video intValue] != 1) {
+        self.localVideoTrack.enabled = NO;
     }
 }
 
@@ -442,7 +447,7 @@ NSString *const CLOSED = @"CLOSED";
     [[TwilioVideoManager getInstance] publishEvent: VIDEO_TRACK_ADDED];
 
     if (self.remoteParticipant == participant) {
-        [self setupRemoteView];
+             [self setupRemoteView];
         [videoTrack addRenderer:self.remoteView];
     }
 }

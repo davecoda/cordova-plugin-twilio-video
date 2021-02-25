@@ -2,14 +2,16 @@ var exec = require('cordova/exec');
 
 var TwilioVideo = function() {};
 
-TwilioVideo.openRoom = function(token, room, eventCallback, config) {
+TwilioVideo.openRoom = function(token, room, eventCallback, config, audio, video) {
     config = config != null ? config : null;
+    audio = audio != null ? audio : null;
+    video = video != null ? video : null;
     exec(function(e) {
         console.log("Twilio video event fired: " + e);
         if (eventCallback) {
             eventCallback(e.event, e.data);
         }
-    }, null, 'TwilioVideoPlugin', 'openRoom', [token, room, config]);
+    }, null, 'TwilioVideoPlugin', 'openRoom', [token, room, audio, video, config]);
 };
 
 

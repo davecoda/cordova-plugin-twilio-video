@@ -68,6 +68,8 @@ public class TwilioVideoActivity extends AppCompatActivity implements CallAction
      */
     private String accessToken;
     private String roomId;
+    private Boolean audio;
+    private Boolean video;
     private CallConfig config;
 
     /*
@@ -138,6 +140,8 @@ public class TwilioVideoActivity extends AppCompatActivity implements CallAction
 
         this.accessToken = intent.getStringExtra("token");
         this.roomId = intent.getStringExtra("roomId");
+        this.audio = intent.getBooleanExtra("audio", true);
+        this.video = intent.getBooleanExtra("video", true);
         this.config = (CallConfig) intent.getSerializableExtra("config");
 
         Log.d(TwilioVideo.TAG, "BEFORE REQUEST PERMISSIONS");
@@ -276,12 +280,12 @@ public class TwilioVideoActivity extends AppCompatActivity implements CallAction
 
     private void createAudioAndVideoTracks() {
         // Share your microphone
-        localAudioTrack = LocalAudioTrack.create(this, true, LOCAL_AUDIO_TRACK_NAME);
+        localAudioTrack = LocalAudioTrack.create(this, this.audio, LOCAL_AUDIO_TRACK_NAME);
 
         // Share your camera
         cameraCapturer = new CameraCapturerCompat(this, getAvailableCameraSource());
         localVideoTrack = LocalVideoTrack.create(this,
-                true,
+                this.video,
                 cameraCapturer.getVideoCapturer(),
                 LOCAL_VIDEO_TRACK_NAME);
         this.moveLocalVideoToThumbnailView();

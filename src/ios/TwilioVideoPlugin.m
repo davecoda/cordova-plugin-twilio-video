@@ -14,9 +14,12 @@
     NSArray *args = command.arguments;
     NSString* token = args[0];
     NSString* room = args[1];
+    NSNumber* audio = args[2];
+    NSNumber* video = args[3];
+
     TwilioVideoConfig *config = [[TwilioVideoConfig alloc] init];
-    if ([args count] > 2) {
-        [config parse: command.arguments[2]];
+    if ([args count] > 4) {
+        [config parse: command.arguments[4]];
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -29,7 +32,7 @@
         vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
         
         [self.viewController presentViewController:vc animated:NO completion:^{
-            [vc connectToRoom:room token:token];
+            [vc connectToRoom:room token:token audio:audio video:video];
         }];
     });
 }
